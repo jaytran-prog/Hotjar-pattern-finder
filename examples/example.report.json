@@ -1,0 +1,33 @@
+{
+  "title": "Do Users Hesitate Before Paying? — Hotjar Findings (EXAMPLE)",
+  "meta": [
+    { "label": "Date", "value": "Example only — fictional data" },
+    { "label": "Goal", "value": "Show a new teammate what the report looks like." },
+    { "label": "Question", "value": "Do users hesitate before clicking **Pay now**?" },
+    { "label": "Segment sampled", "value": "\"Checkout\" (example)" },
+    { "label": "Sample size", "value": "5 of 12 recordings" }
+  ],
+  "keyFinding": {
+    "headline": "**4 of 5 sampled sessions hovered over Pay now for 10+ seconds before clicking.**",
+    "confidence": "**Pattern** (fictional example data)",
+    "body": ["This is where the one-paragraph so-what goes."],
+    "image": "assets/example-hero.png",
+    "imageCaption": "Recording #1 at 1:23. The mouse trail circles the Pay now button before the click.",
+    "table": {
+      "headers": ["#", "Country", "Duration", "Hesitated?", "Frustration"],
+      "widths": [6, 20, 14, 30, 30],
+      "rows": [["1", "SG", "4:10", "Yes (14 s)", "none"], ["2", "MY", "2:55", "No", "1 U-turn"]]
+    }
+  },
+  "evidenceIntro": "Most relevant first.",
+  "evidence": [
+    {
+      "title": "Recording 1: example",
+      "link": "https://www.hotjar.com",
+      "linkLabel": "Watch highlight clip",
+      "body": "Why this session matters to the question."
+    }
+  ],
+  "nextSteps": ["**A concrete next action.** Why, and what it would measure."],
+  "notes": ["Example file — no real user data."]
+}

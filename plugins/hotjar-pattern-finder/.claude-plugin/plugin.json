@@ -1,0 +1,10 @@
+{
+  "name": "hotjar-pattern-finder",
+  "version": "1.0.0",
+  "description": "Answer a UX research question from several Hotjar recordings: pattern-vs-anecdote count, cropped screenshots, a Word report, and (with approval) Hotjar highlight clips.",
+  "author": {
+    "name": "jaytran-prog"
+  },
+  "repository": "https://github.com/jaytran-prog/Hotjar-pattern-finder",
+  "keywords": ["hotjar", "ux-research", "session-recordings", "claude-in-chrome"]
+}

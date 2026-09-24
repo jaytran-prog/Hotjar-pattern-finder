@@ -1,0 +1,12 @@
+# Dependencies (installed per machine by scripts/check_setup.sh)
+node_modules/
+
+# Research output — contains real user data. Never commit it.
+docs/hotjar-findings/
+shots/
+cropped/
+*.docx
+*.report.json
+!examples/*.report.json
+
+.DS_Store

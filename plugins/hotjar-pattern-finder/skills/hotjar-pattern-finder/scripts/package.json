@@ -1,0 +1,8 @@
+{
+  "name": "hotjar-pattern-finder-scripts",
+  "private": true,
+  "description": "Helper scripts for the hotjar-pattern-finder skill (Word report builder).",
+  "dependencies": {
+    "docx": "^9.7.2"
+  }
+}

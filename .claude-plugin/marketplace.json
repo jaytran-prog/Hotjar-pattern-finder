@@ -1,0 +1,17 @@
+{
+  "name": "hotjar-pattern-finder",
+  "owner": {
+    "name": "jaytran-prog"
+  },
+  "metadata": {
+    "description": "Hotjar research skills for Claude Code."
+  },
+  "plugins": [
+    {
+      "name": "hotjar-pattern-finder",
+      "source": "./plugins/hotjar-pattern-finder",
+      "description": "Answer a UX research question from several Hotjar recordings: pattern-vs-anecdote count, cropped screenshots, a Word report, and (with approval) Hotjar highlight clips.",
+      "version": "1.0.0"
+    }
+  ]
+}

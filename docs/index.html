@@ -1,0 +1,507 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Hotjar Pattern Finder</title>
+<style>
+  :root{
+    --bg:#EEF0EA;
+    --surface:#FFFFFF;
+    --surface-soft:#E4E7DE;
+    --ink:#1D2624;
+    --ink-soft:#57635D;
+    --ink-faint:#8A948C;
+    --accent:#B9772A;
+    --accent-ink:#7A4E17;
+    --accent-soft:#F1DFB9;
+    --line:#D3D6CB;
+    --rage:#A8452F;
+    --rage-soft:#F1DAD2;
+    --uturn:#2E6E63;
+    --uturn-soft:#D9E7E2;
+    --on-accent:#FFFFFF;
+    --shadow: 0 1px 2px rgba(29,38,36,0.06), 0 8px 24px rgba(29,38,36,0.06);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#151A18;
+      --surface:#1C2220;
+      --surface-soft:#242B28;
+      --ink:#ECEFE9;
+      --ink-soft:#AEB8B0;
+      --ink-faint:#788077;
+      --accent:#E0A94E;
+      --accent-ink:#F4CE8B;
+      --accent-soft:#3B2E15;
+      --line:#333B37;
+      --rage:#E1836A;
+      --rage-soft:#3A241E;
+      --uturn:#6FBBAA;
+      --uturn-soft:#1E3630;
+      --on-accent:#20180A;
+      --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 12px 28px rgba(0,0,0,0.45);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#151A18;
+    --surface:#1C2220;
+    --surface-soft:#242B28;
+    --ink:#ECEFE9;
+    --ink-soft:#AEB8B0;
+    --ink-faint:#788077;
+    --accent:#E0A94E;
+    --accent-ink:#F4CE8B;
+    --accent-soft:#3B2E15;
+    --on-accent:#20180A;
+    --line:#333B37;
+    --rage:#E1836A;
+    --rage-soft:#3A241E;
+    --uturn:#6FBBAA;
+    --uturn-soft:#1E3630;
+    --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 12px 28px rgba(0,0,0,0.45);
+    color-scheme: dark;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Public Sans', system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ font-family:'Fraunces', Georgia, serif; text-wrap:balance; }
+  .mono{ font-family:'IBM Plex Mono', 'SF Mono', monospace; }
+
+  .slide-deck{ position:relative; width:100vw; height:100vh; overflow:hidden; }
+  @media (min-width:769px){
+    .slide-deck{
+      max-width:calc(100vh * 16 / 9);
+      max-height:calc(100vw * 9 / 16);
+      margin:auto;
+      position:absolute; inset:0;
+    }
+  }
+  .slide{
+    position:absolute; width:100%; height:100%;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:64px 88px;
+    opacity:0; visibility:hidden; transition:opacity .35s ease;
+    background:var(--bg);
+    overflow:hidden;
+  }
+  .slide.active{ opacity:1; visibility:visible; }
+  .slide-content{
+    width:100%; max-width:100%; max-height:100%;
+    display:flex; flex-direction:column; gap:22px;
+    animation:fadeUp .5s ease-out both;
+  }
+  .slide-content.center{ align-items:center; text-align:center; }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);} }
+
+  .eyebrow{
+    display:flex; align-items:center; gap:10px;
+    text-transform:uppercase; letter-spacing:.12em; font-size:13px;
+    color:var(--accent-ink); font-weight:600; font-family:'IBM Plex Mono', monospace;
+  }
+  .eyebrow .dots{ display:flex; align-items:center; gap:5px; }
+  .eyebrow .dots span{ width:6px; height:6px; border-radius:50%; background:var(--line); }
+  .eyebrow .dots span.on{ background:var(--accent); }
+
+  .slide-title{ font-size:clamp(30px,4.6vw,56px); font-weight:600; color:var(--ink); line-height:1.08; }
+  .slide-sub{ font-size:clamp(16px,2vw,20px); color:var(--ink-soft); max-width:640px; line-height:1.5; }
+  .slide-title.hero{ font-size:clamp(44px,7.5vw,88px); }
+
+  .tag-chip{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:8px 16px; border-radius:100px; background:var(--surface);
+    border:1px solid var(--line); font-family:'IBM Plex Mono', monospace;
+    font-size:14px; color:var(--ink-soft); box-shadow:var(--shadow);
+  }
+  .tag-chip b{ color:var(--accent-ink); }
+
+  /* marker line motif */
+  .marker-rail{ display:flex; align-items:center; gap:0; width:100%; max-width:520px; }
+  .marker-rail .track{ flex:1; height:2px; background:var(--line); }
+  .marker-rail .dot{ width:9px; height:9px; border-radius:50%; background:var(--accent); flex:none; }
+
+  /* problem two-col (with center arrow) */
+  .split{ display:grid; grid-template-columns:1fr auto 1fr; gap:28px; width:100%; align-items:stretch; }
+  @media (max-width:900px){ .split{ grid-template-columns:1fr; } }
+
+  /* plain two-col, no arrow */
+  .split-2{ display:grid; grid-template-columns:1fr 1fr; gap:24px; width:100%; align-items:stretch; }
+  @media (max-width:900px){ .split-2{ grid-template-columns:1fr; } }
+  .panel{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:26px 28px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:10px;
+  }
+  .panel .label{ font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); }
+  .panel.dim{ opacity:.85; }
+  .panel p{ color:var(--ink-soft); font-size:15px; line-height:1.55; }
+  .panel .big{ font-family:'Fraunces',serif; font-size:20px; color:var(--ink); }
+  .arrow-between{ display:flex; align-items:center; justify-content:center; color:var(--accent); font-size:22px; }
+  @media (max-width:900px){ .arrow-between{ transform:rotate(90deg); } }
+
+  /* feature grid */
+  .grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; width:100%; }
+  @media (max-width:900px){ .grid3{ grid-template-columns:1fr; } }
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:24px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:10px;
+  }
+  .card .num{ font-family:'IBM Plex Mono',monospace; color:var(--accent); font-size:13px; }
+  .card h3{ font-size:19px; color:var(--ink); font-weight:600; }
+  .card p{ color:var(--ink-soft); font-size:14.5px; line-height:1.5; }
+
+  /* how it works steps */
+  .steps{ display:flex; flex-direction:column; gap:0; width:100%; max-width:760px; }
+  .step{ display:grid; grid-template-columns:28px 1fr; gap:18px; padding:16px 0; position:relative; }
+  .step .stem{ position:relative; display:flex; justify-content:center; }
+  .step .stem::before{
+    content:""; position:absolute; top:-16px; bottom:-16px; width:2px; background:var(--line);
+  }
+  .step:first-child .stem::before{ top:50%; }
+  .step:last-child .stem::before{ bottom:50%; }
+  .step .stem .node{
+    width:26px; height:26px; border-radius:50%; background:var(--surface);
+    border:2px solid var(--accent); color:var(--accent-ink); display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; position:relative; z-index:1;
+  }
+  .step h3{ font-size:17px; color:var(--ink); margin-bottom:2px; font-weight:600; }
+  .step p{ color:var(--ink-soft); font-size:14.5px; line-height:1.5; }
+
+  /* inputs list */
+  .inputs{ display:flex; flex-direction:column; gap:14px; width:100%; max-width:680px; }
+  .input-row{
+    display:grid; grid-template-columns:150px 1fr; gap:20px; align-items:baseline;
+    padding:14px 0; border-bottom:1px solid var(--line);
+  }
+  .input-row:last-child{ border-bottom:none; }
+  .input-row .k{ font-family:'IBM Plex Mono',monospace; color:var(--accent-ink); font-size:13px; font-weight:600; letter-spacing:.03em; }
+  .input-row .v{ color:var(--ink); font-size:15.5px; line-height:1.5; }
+  .input-row .v span{ color:var(--ink-faint); font-size:13.5px; }
+
+  /* guardrails */
+  .guardrails{ display:flex; flex-direction:column; gap:14px; width:100%; max-width:720px; }
+  .guardrail{
+    display:grid; grid-template-columns:34px 1fr; gap:16px; align-items:start;
+    background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:18px 20px; box-shadow:var(--shadow);
+  }
+  .guardrail .mark{ width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; }
+  .guardrail p{ color:var(--ink-soft); font-size:14.5px; line-height:1.55; }
+  .guardrail p b{ color:var(--ink); }
+
+  /* report mockup */
+  .report{
+    background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:0; box-shadow:var(--shadow);
+    width:100%; max-width:760px; overflow:hidden;
+  }
+  .report-head{ padding:20px 26px 14px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
+  .report-head h3{ font-size:18px; color:var(--ink); font-weight:600; line-height:1.35; }
+  .report-head .example-badge{
+    flex:none; font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.05em; text-transform:uppercase;
+    background:var(--accent-soft); color:var(--accent-ink); padding:5px 10px; border-radius:100px; white-space:nowrap;
+  }
+  .report-body{ padding:18px 26px 22px; display:flex; flex-direction:column; gap:16px; }
+  .kf-label{ font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); }
+  .kf-text{ font-size:15px; color:var(--ink); line-height:1.55; }
+  .kf-text b{ color:var(--accent-ink); }
+  .evidence-row{ display:flex; align-items:center; gap:12px; padding:10px 0; border-top:1px solid var(--line); }
+  .evidence-row .pill{ flex:none; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; }
+  .evidence-row .txt{ flex:1; font-size:13.5px; color:var(--ink-soft); line-height:1.4; }
+  .evidence-row .link{ flex:none; font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--accent-ink); white-space:nowrap; }
+
+  /* setup */
+  .mono-path{
+    font-family:'IBM Plex Mono',monospace; font-size:14.5px; color:var(--ink);
+    background:var(--surface-soft); padding:9px 12px; border-radius:8px; display:inline-block; word-break:break-all;
+  }
+  .setup-steps{ display:flex; flex-direction:column; gap:10px; width:100%; max-width:700px; }
+  .setup-step{ display:flex; gap:14px; align-items:baseline; font-size:14.5px; color:var(--ink-soft); line-height:1.5; }
+  .setup-step .step-num{
+    flex:none; width:22px; height:22px; border-radius:50%; background:var(--accent-soft); color:var(--accent-ink);
+    display:inline-flex; align-items:center; justify-content:center; font-size:12px; font-weight:600;
+    font-family:'IBM Plex Mono',monospace; transform:translateY(2px);
+  }
+
+  /* CTA */
+  .chips{ display:flex; flex-wrap:wrap; gap:10px; }
+  .chip{
+    font-family:'IBM Plex Mono',monospace; font-size:13.5px; color:var(--ink);
+    background:var(--surface); border:1px solid var(--line); padding:9px 15px; border-radius:100px; box-shadow:var(--shadow);
+  }
+  .chip.primary{ background:var(--accent); color:var(--on-accent); border-color:var(--accent); font-weight:600; }
+
+  .footer-note{ font-size:13.5px; color:var(--ink-faint); }
+
+  /* nav */
+  .progress-bar{ position:fixed; top:0; left:0; height:3px; background:var(--accent); transition:width .3s; z-index:1000; }
+  .nav-controls{ position:fixed; bottom:26px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:18px; z-index:1000; }
+  .nav-btn{
+    background:var(--surface); border:1px solid var(--line); color:var(--ink);
+    width:38px; height:38px; border-radius:50%; cursor:pointer; font-size:16px; box-shadow:var(--shadow);
+  }
+  .nav-btn:hover{ background:var(--surface-soft); }
+  .nav-btn:focus-visible, .chip:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .slide-counter{ color:var(--ink-faint); font-size:13px; font-family:'IBM Plex Mono',monospace; }
+
+  @media (max-width:768px){
+    .slide{ padding:40px 24px; }
+    .slide-title.hero{ font-size:clamp(30px,8vw,44px); }
+    .grid3{ gap:14px; }
+    .input-row{ grid-template-columns:1fr; gap:4px; }
+  }
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="slide-deck">
+
+  <!-- 1 Title -->
+  <div class="slide active">
+    <div class="slide-content center">
+      <div class="eyebrow"><span class="dots"><span class="on"></span><span></span><span></span></span> Claude Code skill · UX research</div>
+      <h1 class="slide-title hero">Hotjar Pattern Finder</h1>
+      <p class="slide-sub">Ask a question. Get an answer built from several real sessions — not one recording, a pattern. Works on any website or app you record with Hotjar.</p>
+      <div class="tag-chip">run it with <b>/hotjar-pattern-finder</b></div>
+    </div>
+  </div>
+
+  <!-- 2 Problem -->
+  <div class="slide">
+    <div class="slide-content">
+      <div class="eyebrow"><span class="dots"><span class="on"></span><span class="on"></span><span></span></span> The problem</div>
+      <h2 class="slide-title">One recording is an anecdote, not an answer.</h2>
+      <div class="split">
+        <div class="panel dim">
+          <div class="label">Today</div>
+          <div class="big">Watch → scrub → guess</div>
+          <p>Open a recording. Watch 10–15 minutes to find the moment that matters. Do it again for the next session — if you remember to, and if you have the time.</p>
+        </div>
+        <div class="arrow-between">→</div>
+        <div class="panel">
+          <div class="label">With the skill</div>
+          <div class="big">Ask → sample → know</div>
+          <p>One question in. Several sessions sampled, jumped straight to the relevant moment, and cross-checked against each other before anyone calls it a pattern.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3 Solution -->
+  <div class="slide">
+    <div class="slide-content">
+      <div class="eyebrow"><span class="dots"><span class="on"></span><span class="on"></span><span class="on"></span></span> What it does</div>
+      <h2 class="slide-title">Give it a question. It gives you a pattern.</h2>
+      <div class="grid3">
+        <div class="card">
+          <div class="num">01</div>
+          <h3>Samples, not one</h3>
+          <p>Pulls 5–10 recordings from a filter or segment you've already saved in Hotjar — not a single lucky (or unlucky) session.</p>
+        </div>
+        <div class="card">
+          <div class="num">02</div>
+          <h3>Jumps to the moment</h3>
+          <p>Uses Hotjar's own rage-click, u-turn and error markers to go straight to what matters, instead of watching start to finish.</p>
+        </div>
+        <div class="card">
+          <div class="num">03</div>
+          <h3>States its confidence</h3>
+          <p>Reports "4 of 5 sessions," not a vibe — and says so plainly when there's too little evidence to call it a trend.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 How it works -->
+  <div class="slide">
+    <div class="slide-content">
+      <div class="eyebrow"><span class="dots"><span class="on"></span><span class="on"></span><span class="on"></span></span> How it works</div>
+      <h2 class="slide-title">From question to report, in five steps.</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="stem"><div class="node">1</div></div>
+          <div><h3>Check the counts first</h3><p>Reads each session's rage-click / u-turn / error tally before opening anything — skips sessions with nothing relevant.</p></div>
+        </div>
+        <div class="step">
+          <div class="stem"><div class="node">2</div></div>
+          <div><h3>Click the marker</h3><p>Jumps straight to that timestamp on Hotjar's own timeline. No linear scrubbing through dead time.</p></div>
+        </div>
+        <div class="step">
+          <div class="stem"><div class="node">3</div></div>
+          <div><h3>Capture and caption</h3><p>Screenshots the moment and writes the caption from Hotjar's own labeled event, not a guess.</p></div>
+        </div>
+        <div class="step">
+          <div class="stem"><div class="node">4</div></div>
+          <div><h3>Propose highlights, ask first</h3><p>Suggests a short list of Hotjar highlight clips worth saving to the team's collection — nothing gets written until you approve it.</p></div>
+        </div>
+        <div class="step">
+          <div class="stem"><div class="node">5</div></div>
+          <div><h3>Synthesize into a report</h3><p>Counts how many sampled sessions actually match, flags confidence, and writes it all into a Word doc with next steps.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5 Inputs -->
+  <div class="slide">
+    <div class="slide-content">
+      <div class="eyebrow"><span class="dots"><span class="on"></span><span class="on"></span><span class="on"></span></span> Before you run it</div>
+      <h2 class="slide-title">Four things it needs from you.</h2>
+      <div class="inputs">
+        <div class="input-row"><div class="k">GOAL</div><div class="v">One sentence on why this matters right now. <span>e.g. "we're deciding whether to redesign the checkout step"</span></div></div>
+        <div class="input-row"><div class="k">QUESTION</div><div class="v">The specific thing you want answered. <span>e.g. "do users hesitate before clicking Pay?"</span></div></div>
+        <div class="input-row"><div class="k">FILTER / SEGMENT</div><div class="v">A filter or segment you've already saved in Hotjar. <span>it won't build one from scratch — yet</span></div></div>
+        <div class="input-row"><div class="k">SAMPLE SIZE</div><div class="v">How many sessions to sample. <span>defaults to 5, capped at 10</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 Guardrails -->
+  <div class="slide">
+    <div class="slide-content">
+      <div class="eyebrow"><span class="dots"><span class="on"></span><span class="on"></span><span class="on"></span></span> What it won't do</div>
+      <h2 class="slide-title">It rides your login. It never asks for your password.</h2>
+      <div class="guardrails">
+        <div class="guardrail">
+          <div class="mark" style="background:var(--uturn-soft); color:var(--uturn);">🔒</div>
+          <p><b>Needs you already signed into Hotjar in Chrome.</b> If it hits a login screen, it stops and asks you to sign in yourself — it will never touch a credentials field.</p>
+        </div>
+        <div class="guardrail">
+          <div class="mark" style="background:var(--rage-soft); color:var(--rage);">🔎</div>
+          <p><b>Recordings are real user and account data.</b> The report is saved locally only — it always asks before sharing it anywhere, every time, even if a past run was approved.</p>
+        </div>
+        <div class="guardrail">
+          <div class="mark" style="background:var(--accent-soft); color:var(--accent-ink);">⚖️</div>
+          <p><b>Fewer than 3 matching sessions?</b> It calls that an anecdote out loud in the report, never a pattern.</p>
+        </div>
+        <div class="guardrail">
+          <div class="mark" style="background:var(--uturn-soft); color:var(--uturn);">💡</div>
+          <p><b>Highlights are writes to the team's shared Hotjar workspace.</b> It proposes a list first and only saves after you say go — never edits or deletes a highlight it didn't create.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7 Example output -->
+  <div class="slide">
+    <div class="slide-content">
+      <div class="eyebrow"><span class="dots"><span class="on"></span><span class="on"></span><span class="on"></span></span> What you get back</div>
+      <h2 class="slide-title">A Word doc, backed by shareable highlight clips.</h2>
+      <p class="slide-sub" style="max-width:100%;">A .docx report — plus, evidence links open a Hotjar highlight clip of just that moment, not a raw timestamp.</p>
+      <div class="report">
+        <div class="report-head">
+          <h3>Do users hesitate before paying? — Hotjar Findings.docx</h3>
+          <div class="example-badge">Example — illustrative</div>
+        </div>
+        <div class="report-body">
+          <div>
+            <div class="kf-label">Key finding</div>
+            <div class="kf-text"><b>3 of 5</b> sampled sessions paused 10+ seconds and re-opened the order summary before clicking "Pay now."</div>
+          </div>
+          <div>
+            <div class="evidence-row">
+              <div class="pill" style="background:var(--rage-soft); color:var(--rage);">😠</div>
+              <div class="txt">Session A — rage-clicked the coupon field twice before proceeding</div>
+              <div class="link">Watch highlight ↗</div>
+            </div>
+            <div class="evidence-row">
+              <div class="pill" style="background:var(--uturn-soft); color:var(--uturn);">↺</div>
+              <div class="txt">Session B — u-turned back to the cart, then returned to checkout</div>
+              <div class="link">Watch highlight ↗</div>
+            </div>
+          </div>
+          <div>
+            <div class="kf-label">Next steps</div>
+            <div class="kf-text">Show the total breakdown next to "Pay now"; re-check with a fresh sample after the change.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8 Setup -->
+  <div class="slide">
+    <div class="slide-content">
+      <div class="eyebrow"><span class="dots"><span class="on"></span><span class="on"></span><span class="on"></span></span> Get it running</div>
+      <h2 class="slide-title">A few minutes, then it's yours.</h2>
+      <p class="slide-sub">Install it as a Claude Code plugin. Updates arrive with one command.</p>
+      <div class="split-2">
+        <div class="panel">
+          <div class="label">In Claude Code</div>
+          <div class="mono-path">/plugin marketplace add jaytran-prog/Hotjar-pattern-finder</div>
+          <div class="mono-path">/plugin install hotjar-pattern-finder@hotjar-pattern-finder</div>
+          <p>Restart Claude Code if the skill doesn't show up. On first use it runs a setup check and installs the one npm package it needs.</p>
+        </div>
+        <div class="panel">
+          <div class="label">You also need</div>
+          <p><b>Claude in Chrome</b> extension, connected to Claude Code — and signed in to Hotjar in that Chrome.</p>
+          <p><b>Python 3 + Pillow</b> (screenshots) and <b>Node 18+</b> (Word report). The setup check tells you exactly what's missing.</p>
+        </div>
+      </div>
+      <div class="setup-steps">
+        <div class="setup-step"><span class="step-num">1</span> Run the two commands above in Claude Code.</div>
+        <div class="setup-step"><span class="step-num">2</span> Make sure you have a saved segment in Hotjar for what you want to study.</div>
+        <div class="setup-step"><span class="step-num">3</span> Ask your question. Full guide: github.com/jaytran-prog/Hotjar-pattern-finder</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9 CTA -->
+  <div class="slide">
+    <div class="slide-content center">
+      <div class="eyebrow"><span class="dots"><span class="on"></span><span class="on"></span><span class="on"></span></span> Try it</div>
+      <h2 class="slide-title">Bring a question. Leave with an answer.</h2>
+      <p class="slide-sub">Say any of these to Claude, with your goal, question, and a saved Hotjar filter ready:</p>
+      <div class="chips">
+        <div class="chip primary">/hotjar-pattern-finder</div>
+        <div class="chip">"check Hotjar for…"</div>
+        <div class="chip">"is this a pattern in Hotjar"</div>
+        <div class="chip">"analyze these recordings"</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="nav-controls">
+  <button class="nav-btn" onclick="prevSlide()" aria-label="Previous slide">←</button>
+  <span class="slide-counter"><span id="current">1</span> / <span id="total">8</span></span>
+  <button class="nav-btn" onclick="nextSlide()" aria-label="Next slide">→</button>
+</div>
+
+<script>
+  let current = 1;
+  const total = document.querySelectorAll('.slide').length;
+  document.getElementById('total').textContent = total;
+
+  function showSlide(n){
+    if (n < 1) n = 1;
+    if (n > total) n = total;
+    current = n;
+    document.querySelectorAll('.slide').forEach((s,i)=>{
+      s.classList.toggle('active', i === n-1);
+    });
+    document.getElementById('current').textContent = n;
+    document.getElementById('progressBar').style.width = (n/total*100) + '%';
+  }
+  function nextSlide(){ showSlide(current+1); }
+  function prevSlide(){ showSlide(current-1); }
+
+  document.addEventListener('keydown', (e)=>{
+    if (e.key === 'ArrowRight' || e.key === ' '){ e.preventDefault(); nextSlide(); }
+    if (e.key === 'ArrowLeft'){ e.preventDefault(); prevSlide(); }
+  });
+  document.addEventListener('click', (e)=>{
+    if (!e.target.closest('.nav-controls') && !e.target.closest('a')) nextSlide();
+  });
+
+  // Deep links: index.html#8 opens slide 8, and the hash follows navigation.
+  const _show = showSlide;
+  showSlide = (n) => { _show(n); history.replaceState(null, '', '#' + current); };
+  window.addEventListener('hashchange', () => _show(parseInt(location.hash.slice(1), 10) || 1));
+  _show(parseInt(location.hash.slice(1), 10) || 1);
+</script>
+
+</body></html>

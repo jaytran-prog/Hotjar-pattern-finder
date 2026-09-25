@@ -7,6 +7,14 @@ Ask a UX research question in plain language — *"do users hesitate before payi
 
 It works on **any website or app you record with Hotjar**: it reads Hotjar's own UI, not your site's, so nothing in it is tied to one product. There's no Hotjar API behind this. Claude drives the Hotjar web UI in the Chrome you're already logged into, and it never handles your Hotjar password.
 
+## Visual guide
+
+A 9-slide walkthrough of what it does, how it works, the guardrails, and how to set it up:
+
+**→ [Open the guide](https://jaytran-prog.github.io/Hotjar-pattern-finder/)** (or open [`docs/index.html`](docs/index.html) locally in a browser). Use ← → or click to move between slides. `#8` in the URL jumps straight to setup.
+
+[![How it works: from question to report in five steps](docs/preview.png)](https://jaytran-prog.github.io/Hotjar-pattern-finder/)
+
 ---
 
 ## Requirements
@@ -94,6 +102,7 @@ plugins/hotjar-pattern-finder/
       crop_player.py                       crops screenshots to the replayed page
       build_report.js                      JSON spec -> .docx
 examples/                                  fictional example report spec + placeholder image
+docs/index.html                            visual slide guide (served by GitHub Pages)
 ```
 
 ## Troubleshooting

@@ -231,6 +231,9 @@
   }
   .chip.primary{ background:var(--accent); color:var(--on-accent); border-color:var(--accent); font-weight:600; }
 
+  .gh-link{ color:var(--accent-ink); text-decoration:underline; text-underline-offset:2px; }
+  .gh-cta{ text-decoration:none; margin-top:6px; border-color:var(--accent); color:var(--accent-ink); font-weight:600; }
+  .gh-cta:hover{ background:var(--accent-soft); }
   .footer-note{ font-size:13.5px; color:var(--ink-faint); }
 
   /* nav */
@@ -448,7 +451,7 @@
       <div class="setup-steps">
         <div class="setup-step"><span class="step-num">1</span> Run the two commands above in Claude Code.</div>
         <div class="setup-step"><span class="step-num">2</span> Make sure you have a saved segment in Hotjar for what you want to study.</div>
-        <div class="setup-step"><span class="step-num">3</span> Ask your question. Full guide: github.com/jaytran-prog/Hotjar-pattern-finder</div>
+        <div class="setup-step"><span class="step-num">3</span> Ask your question. Full docs: <a class="gh-link" href="https://github.com/jaytran-prog/Hotjar-pattern-finder" target="_blank" rel="noopener">github.com/jaytran-prog/Hotjar-pattern-finder</a></div>
       </div>
     </div>
   </div>
@@ -465,6 +468,7 @@
         <div class="chip">"is this a pattern in Hotjar"</div>
         <div class="chip">"analyze these recordings"</div>
       </div>
+      <a class="chip gh-cta" href="https://github.com/jaytran-prog/Hotjar-pattern-finder" target="_blank" rel="noopener">View on GitHub — install &amp; docs ↗</a>
     </div>
   </div>
 

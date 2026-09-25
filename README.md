@@ -1,5 +1,7 @@
 # Hotjar Pattern Finder (Claude Code skill)
 
+**[📖 Visual guide — how it works in 9 slides](https://jaytran-prog.github.io/Hotjar-pattern-finder/)** · [Install](#install) · [Try it](#try-it) · [Privacy](#data--privacy--please-read)
+
 Ask a UX research question in plain language — *"do users hesitate before paying?"* or *"why do people drop off at signup step 2?"* — and Claude samples several real Hotjar recordings in your own Chrome, counts how many show the behaviour, and gives you:
 
 - **A Word (.docx) report**: key finding with a count ("8 of 10 sessions…") and confidence level, a hero screenshot, a per-session table, evidence with cropped screenshots, next steps.

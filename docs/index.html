@@ -248,6 +248,9 @@
     /* Phones: slides can be taller than the screen, so let them scroll, and
        leave room at the bottom for the nav buttons. */
     .slide{ padding:40px 20px 110px; justify-content:flex-start; overflow-y:auto; }
+    .slide-content{ max-height:none; }
+    /* bottom padding is ignored in a scrolling flex column, so use a spacer */
+    .slide-content::after{ content:""; flex:none; height:90px; }
     .slide-title.hero{ font-size:clamp(30px,8vw,44px); }
     .grid3{ gap:14px; }
     .input-row{ grid-template-columns:1fr; gap:4px; }
